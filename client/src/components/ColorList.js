@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useRouteMatch, useHistory } from "react-router-dom";
+
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const initialColor = {
   color: "",
@@ -22,12 +24,12 @@ const ColorList = (props, { colors, updateColors }) => {
   const saveEdit = e => {
     e.preventDefault();
     // Make a put request to save your updated color
-    axios
+    axiosWithAuth()
       // think about where will you get the id from...
-      .put(`http://localhost:5000/api/colors/${colors}`, colors)
+      .put(`http://localhost:5000/api/colors/`)
       .then(response => {
         // where is is saved right now?
-        console.log(response.data);
+        console.log("API Colors:", response.data);
         setEditing(false);
         history.push(`/protected`);
       })
@@ -37,10 +39,10 @@ const ColorList = (props, { colors, updateColors }) => {
   };
 
   const deleteColor = color => {
-    axios
+    axiosWithAuth()
       .delete(`http://localhost:5000/api/colors/${match.params.id}`)
       .then(res => {
-        console.log(res);
+        console.log("We're deleting stuff!", res);
         setColorToEdit(null);
         history.push("/protected");
       });

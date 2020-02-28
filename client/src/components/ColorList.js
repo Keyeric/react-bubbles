@@ -24,7 +24,7 @@ const ColorList = (props, { colors, updateColors }) => {
     // Make a put request to save your updated color
     axios
       // think about where will you get the id from...
-      .put(`http://localhost:5000/api/colors/${colors.id}`, colors)
+      .put(`http://localhost:5000/api/colors/${colors}`, colors)
       .then(response => {
         // where is is saved right now?
         console.log(response.data);
@@ -42,7 +42,6 @@ const ColorList = (props, { colors, updateColors }) => {
       .then(res => {
         console.log(res);
         setColorToEdit(null);
-        props.setUpdate(!props.update);
         history.push("/protected");
       });
   };

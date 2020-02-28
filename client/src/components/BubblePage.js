@@ -14,7 +14,7 @@ const BubblePage = props => {
     axiosWithAuth()
       .get(`http://localhost:5000/api/colors`)
       .then(res => {
-        console.log("your list of colors (Bubble Page):", res.data);
+        //console.log("your list of colors (Bubble Page):", res.data);
         setColorList(res.data);
       })
       .catch(err => {

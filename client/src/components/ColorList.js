@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 // import axios from "axios";
-import { useRouteMatch, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 
@@ -10,10 +10,9 @@ const initialColor = {
 };
 
 const ColorList = (props, { colors, updateColors }) => {
-  console.log("This is what your colors is:", colors);
+  //console.log("This is what your colors is:", colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-  const match = useRouteMatch();
   const history = useHistory();
 
   const editColor = color => {
@@ -29,7 +28,7 @@ const ColorList = (props, { colors, updateColors }) => {
       .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
       .then(response => {
         // where is is saved right now?
-        console.log("API Colors:", response.data);
+        //console.log("API Colors:", response.data);
         setColorToEdit(response.data);
         setEditing(false);
         history.push(`/temp`);
@@ -44,7 +43,7 @@ const ColorList = (props, { colors, updateColors }) => {
     axiosWithAuth()
       .delete(`http://localhost:5000/api/colors/${color.id}`, colorToEdit)
       .then(res => {
-        console.log("We're deleting stuff!", res);
+        //console.log("We're deleting stuff!", res);
         setColorToEdit(res);
         history.push(`/temp`);
         history.goBack();

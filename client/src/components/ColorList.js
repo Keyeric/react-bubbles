@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useRouteMatch, useHistory } from "react-router-dom";
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
 
-const ColorList = ({ colors, updateColors }) => {
+const ColorList = (props, { colors, updateColors }) => {
   console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const match = useRouteMatch();
+  const history = useHistory();
 
   const editColor = color => {
     setEditing(true);
@@ -19,12 +22,29 @@ const ColorList = ({ colors, updateColors }) => {
   const saveEdit = e => {
     e.preventDefault();
     // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    axios
+      // think about where will you get the id from...
+      .put(`http://localhost:5000/api/colors/${colors.id}`, colors)
+      .then(response => {
+        // where is is saved right now?
+        console.log(response.data);
+        setEditing(false);
+        history.push(`/protected`);
+      })
+      .catch(error => {
+        console.log("Your put request broke:", error);
+      });
   };
 
   const deleteColor = color => {
-    // make a delete request to delete this color
+    axios
+      .delete(`http://localhost:5000/api/colors/${match.params.id}`)
+      .then(res => {
+        console.log(res);
+        setColorToEdit(null);
+        props.setUpdate(!props.update);
+        history.push("/protected");
+      });
   };
 
   return (
@@ -34,12 +54,14 @@ const ColorList = ({ colors, updateColors }) => {
         {colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
-              <span className="delete" onClick={e => {
-                    e.stopPropagation();
-                    deleteColor(color)
-                  }
-                }>
-                  x
+              <span
+                className="delete"
+                onClick={e => {
+                  e.stopPropagation();
+                  deleteColor(color);
+                }}
+              >
+                x
               </span>{" "}
               {color.color}
             </span>

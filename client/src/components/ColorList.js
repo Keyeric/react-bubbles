@@ -10,7 +10,7 @@ const initialColor = {
 };
 
 const ColorList = (props, { colors, updateColors }) => {
-  console.log(colors);
+  console.log("This is what your colors is:", colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
   const match = useRouteMatch();
@@ -26,12 +26,14 @@ const ColorList = (props, { colors, updateColors }) => {
     // Make a put request to save your updated color
     axiosWithAuth()
       // think about where will you get the id from...
-      .put(`http://localhost:5000/api/colors/`)
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
       .then(response => {
         // where is is saved right now?
         console.log("API Colors:", response.data);
+        setColorToEdit(response.data);
         setEditing(false);
-        history.push(`/protected`);
+        history.push(`/temp`);
+        history.goBack();
       })
       .catch(error => {
         console.log("Your put request broke:", error);
@@ -40,11 +42,12 @@ const ColorList = (props, { colors, updateColors }) => {
 
   const deleteColor = color => {
     axiosWithAuth()
-      .delete(`http://localhost:5000/api/colors/${match.params.id}`)
+      .delete(`http://localhost:5000/api/colors/${color.id}`, colorToEdit)
       .then(res => {
         console.log("We're deleting stuff!", res);
-        setColorToEdit(null);
-        history.push("/protected");
+        setColorToEdit(res);
+        history.push(`/temp`);
+        history.goBack();
       });
   };
 
@@ -52,7 +55,7 @@ const ColorList = (props, { colors, updateColors }) => {
     <div className="colors-wrap">
       <p>colors</p>
       <ul>
-        {colors.map(color => (
+        {props.colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
               <span

@@ -28,7 +28,7 @@ const ColorList = (props, { colors, updateColors }) => {
       .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
       .then(response => {
         // where is is saved right now?
-        //console.log("API Colors:", response.data);
+        console.log("API Colors:", response.data);
         setColorToEdit(response.data);
         setEditing(false);
         history.push(`/temp`);
@@ -49,10 +49,27 @@ const ColorList = (props, { colors, updateColors }) => {
         history.goBack();
       });
   };
+  //For Add Functionality
+  const handleSubmit = event => {
+    event.preventDefault();
+    axiosWithAuth()
+      .post("/api/colors", colorToEdit)
+      .then(res => {
+        console.log("Submit", res);
+        setColorToEdit(res);
+        history.push(`/temp`);
+        history.goBack();
+      })
+      .catch(err => {
+        console.log("Aint no new color round these parts boy", err);
+      });
+  };
+  //End Add Funcionality
 
   return (
     <div className="colors-wrap">
       <p>colors</p>
+
       <ul>
         {props.colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
@@ -75,6 +92,7 @@ const ColorList = (props, { colors, updateColors }) => {
           </li>
         ))}
       </ul>
+
       {editing && (
         <form onSubmit={saveEdit}>
           <legend>edit color</legend>
@@ -105,8 +123,39 @@ const ColorList = (props, { colors, updateColors }) => {
           </div>
         </form>
       )}
+      {/* Add Form */}
+      <div className="NewJunk">
+        <form onSubmit={handleSubmit}>
+          <label>
+            New Color:
+            <input
+              type="text"
+              name="color"
+              placeholder="Add Color"
+              onChange={e =>
+                setColorToEdit({ ...colorToEdit, color: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            New Hex Code:
+            <input
+              type="text"
+              name="hex"
+              placeholder="Hex Code Here"
+              onChange={e =>
+                setColorToEdit({
+                  ...colorToEdit,
+                  code: { hex: e.target.value }
+                })
+              }
+            />
+          </label>
+          <button>New Color GO!</button>
+        </form>
+      </div>
+      {/* End Add Form */}
       <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
     </div>
   );
 };
